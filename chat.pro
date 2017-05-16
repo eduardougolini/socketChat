@@ -9,3 +9,6 @@ INCLUDEPATH += .
 # Input
 SOURCES += chat.cpp
 QT += widgets
+
+HEADERS += \
+    mainpage.h
