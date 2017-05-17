@@ -6,7 +6,14 @@
 #include <QMainWindow>
 #include <QHBoxLayout>
 #include <QTextEdit>
-#include <string>
+#include <stdio.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <string.h>
+#include <arpa/inet.h>
+#include <sys/types.h>
+#include <netinet/in.h>
+#include <sys/socket.h>
 
 class MainPage: public QMainWindow
 {
@@ -18,6 +25,7 @@ public:
 
     QTextEdit *messagesBox;
     QTextEdit *messageInput;
+    int mySocket;
 
     void drawButton() {
         QPushButton *button = new QPushButton("Enviar", this);
@@ -36,17 +44,34 @@ public:
         messageInput->setGeometry(10, 160, 400, 30);
     }
 
-    void showContent() {
-        show();
+    void drawCloseSocketButton() {
+        QPushButton *button = new QPushButton("Fechar conexão", this);
+        button->setGeometry(350, 200, 100, 30);
+
+        QObject::connect(button, SIGNAL(clicked()), this, SLOT(closeClient()));
     }
 
 public slots:
     void clickedButton() {
-        QString oldMessage = messagesBox->toPlainText();
-        QString newMessage = messageInput->toPlainText();
-        messagesBox->setText(oldMessage + newMessage + "\n");
+        QString toSendMessage = messageInput->toPlainText();
+        const char* convertedToSendMessage = toSendMessage.toStdString().c_str();
+
+        if (send(mySocket, convertedToSendMessage, 256, 0) == -1) {
+            perror("send");
+            ::close(mySocket);
+            exit(0);
+        }
 
         messageInput->setText("");
+    }
+
+    void closeClient() {
+        int iSetOption = 1;
+        setsockopt(mySocket, SOL_SOCKET, SO_REUSEADDR, (char*)&iSetOption, sizeof(iSetOption));
+
+        ::close(mySocket);
+        printf(">> A conexao com o servidor foi fechada \n\n");
+        exit(0);
     }
 };
 #endif
