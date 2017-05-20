@@ -14,6 +14,7 @@
 #include <sys/types.h>
 #include <netinet/in.h>
 #include <sys/socket.h>
+#include <thread>
 
 class MainPage: public QMainWindow
 {
@@ -44,13 +45,6 @@ public:
         messageInput->setGeometry(10, 160, 400, 30);
     }
 
-    void drawCloseSocketButton() {
-        QPushButton *button = new QPushButton("Fechar conexão", this);
-        button->setGeometry(350, 200, 100, 30);
-
-        QObject::connect(button, SIGNAL(clicked()), this, SLOT(closeClient()));
-    }
-
 public slots:
     void clickedButton() {
         QString toSendMessage = messageInput->toPlainText();
@@ -63,15 +57,6 @@ public slots:
         }
 
         messageInput->setText("");
-    }
-
-    void closeClient() {
-        int iSetOption = 1;
-        setsockopt(mySocket, SOL_SOCKET, SO_REUSEADDR, (char*)&iSetOption, sizeof(iSetOption));
-
-        ::close(mySocket);
-        printf(">> A conexao com o servidor foi fechada \n\n");
-        exit(0);
     }
 };
 #endif

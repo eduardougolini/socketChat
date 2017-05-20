@@ -7,7 +7,8 @@ TARGET = chat
 INCLUDEPATH += .
 
 # Input
-SOURCES += chat.cpp
+SOURCES += chat.cpp \
+    mainpage.cpp
 QT += widgets
 
 HEADERS += \
