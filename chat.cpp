@@ -30,13 +30,12 @@ int main(int argc, char **argv) {
     window.drawButton();
     window.drawMessagesBox();
     window.drawMessageInput();
+    window.drawUserName();
 
     window.show();
 
     connectToServer(&window);
-//    listenSocket(&window);
     std::thread (listenSocket, &window).detach();
-//    std::thread (listenSocketTimer, &window).detach();
 
     return app.exec();
 }
@@ -54,14 +53,12 @@ void connectToServer(MainPage *window) {
     cliente.sin_port = htons(porta);
     bzero(&(cliente.sin_zero), 8);
 
-//    memset(&(cliente.sin_zero), 0x00, sizeof(cliente.sin_zero));
 
     if(connect(window->mySocket,(struct sockaddr *)&cliente, sizeof(struct sockaddr)) ==-1) {
         puts("\n>> Servidor nao encontrado\nO cliente esta encerrado\n");
 
         exit(0);
     }
-//    fcntl(window->mySocket, F_SETFL, O_NONBLOCK);
 
     printf(">> A conexao com o servidor %s foi estabelecida na porta %d \n\n", ip, porta);
 
@@ -81,7 +78,9 @@ void listenSocket(MainPage *window) {
 
             printf("recebi dados %s", buf);
 
-            window->messagesBox->append(QString(buf));
+            QString username = window->userNameObj->text();
+
+            window->messagesBox->append(username + QString(" >> ") + QString(buf));
         }
     }
 }

@@ -6,6 +6,8 @@
 #include <QMainWindow>
 #include <QHBoxLayout>
 #include <QTextEdit>
+#include <QLineEdit>
+#include <QString>
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
@@ -26,6 +28,7 @@ public:
 
     QTextEdit *messagesBox;
     QTextEdit *messageInput;
+    QLineEdit *userNameObj;
     int mySocket;
 
     void drawButton() {
@@ -43,6 +46,12 @@ public:
     void drawMessageInput() {
         messageInput = new QTextEdit(this);
         messageInput->setGeometry(10, 160, 400, 30);
+    }
+
+    void drawUserName() {
+        userNameObj = new QLineEdit(this);
+        userNameObj->setGeometry(10, 200, 400, 30);
+        userNameObj->setPlaceholderText(QString("Nome de usuário"));
     }
 
 public slots:
