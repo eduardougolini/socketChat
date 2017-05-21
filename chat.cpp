@@ -12,15 +12,21 @@
 #include <iostream>
 #include <fcntl.h>
 #include <netdb.h>
+#include <sstream>
 #include "mainpage.h"
 
-void connectToServer(MainPage *window);
+void connectToServer(MainPage *window, std::string ip);
 void listenSocket(MainPage *window);
 
 int main(int argc, char **argv) {
     QApplication app (argc, argv);
 
     MainPage window;
+
+    std::string ip = "";
+
+    std::cout << "Insira o ip do servidor: ";
+    std::getline(std::cin, ip);
 
     window.setWindowTitle(QString::fromUtf8("Chat"));
     window.resize(500, 300);
@@ -32,14 +38,14 @@ int main(int argc, char **argv) {
 
     window.show();
 
-    connectToServer(&window);
+    connectToServer(&window, ip);
     std::thread (listenSocket, &window).detach();
 
     return app.exec();
 }
 
-void connectToServer(MainPage *window) {
-    char ip[] = "127.0.0.1";
+void connectToServer(MainPage *window, std::string ipString) {
+    const char* ip = ipString.c_str();
     int porta = 9900;
     struct sockaddr_in cliente;
 
@@ -72,9 +78,6 @@ void listenSocket(MainPage *window) {
             exit(0);
         } else {
             buf[numbytes] = '\0';
-
-
-
             window->messagesBox->append(QString(buf));
         }
     }
