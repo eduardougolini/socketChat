@@ -10,11 +10,11 @@
 
 int main (int argc, char** argv) {
 	struct sockaddr_in servidor;
-	int meusocket, tsocket, numbytes;
+	int meusocket, tsocket, numbytes, acceptedSocket;
 	int porta = 9900;
 	struct hostent *host;
-    char buf[256];
-    
+	char buf[256];
+
 	system("clear");
 	printf("Iniciando servidor!\n");
 
@@ -24,25 +24,29 @@ int main (int argc, char** argv) {
 	servidor.sin_addr.s_addr = INADDR_ANY;
 	servidor.sin_port = htons(porta);
 	memset(&(servidor.sin_zero), 0x00, sizeof(servidor.sin_zero));
-	
+
 	tsocket = sizeof(struct sockaddr_in);
 
 	bind(meusocket, (struct sockaddr *)&servidor, sizeof (struct sockaddr));
-	listen(meusocket, 1);
+	listen(meusocket, 5);
 	printf(">> Servidor escutando na porta %d: \n\n", porta);
 
-	meusocket = accept(meusocket, (struct sockaddr *) &servidor, &tsocket);
-    
-    while(numbytes = recv(meusocket, buf, 256, 0 )) {
-        buf[numbytes] = '\0';
-        if (send(meusocket, buf, 256, 0) == -1) {
-            perror("send");
-            close(meusocket);
-            exit(0);
-        }
-        
-        printf("Enviou %s \n", buf);
-    }
-    
+	while (1) {
+		acceptedSocket = accept(meusocket, (struct sockaddr *) &servidor, &tsocket);
+
+		if (!fork()) {
+			while(numbytes = recv(acceptedSocket, buf, 256, 0 )) {
+				buf[numbytes] = '\0';
+				if (send(acceptedSocket, buf, 256, 0) == -1) {
+					perror("send");
+					close(acceptedSocket);
+					exit(0);
+				}
+
+				printf("Enviou %s \n", buf);
+			}
+		}
+
+	}
+
 }
-	

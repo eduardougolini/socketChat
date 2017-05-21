@@ -14,8 +14,6 @@
 #include <netdb.h>
 #include "mainpage.h"
 
-#define STDIN 0
-
 void connectToServer(MainPage *window);
 void listenSocket(MainPage *window);
 
@@ -73,10 +71,7 @@ void listenSocket(MainPage *window) {
             perror("recv");
             exit(0);
         } else {
-            printf("oloco");
             buf[numbytes] = '\0';
-
-            printf("recebi dados %s", buf);
 
             QString username = window->userNameObj->text();
 
