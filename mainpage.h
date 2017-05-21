@@ -57,8 +57,12 @@ public:
 public slots:
     void clickedButton() {
         QString toSendMessage = messageInput->toPlainText();
-        const char* convertedToSendMessage = toSendMessage.toStdString().c_str();
-
+        QString username = userNameObj->text();
+        const char* convertedToSendMessage = new char[256];
+        strcpy(const_cast<char*>(convertedToSendMessage), username.toStdString().c_str());
+        strcat(const_cast<char*>(convertedToSendMessage), " >> ");
+        strcat(const_cast<char*>(convertedToSendMessage), toSendMessage.toStdString().c_str());
+    printf("%s", convertedToSendMessage);
         if (send(mySocket, convertedToSendMessage, 256, 0) == -1) {
             perror("send");
             ::close(mySocket);

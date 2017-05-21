@@ -73,9 +73,9 @@ void listenSocket(MainPage *window) {
         } else {
             buf[numbytes] = '\0';
 
-            QString username = window->userNameObj->text();
 
-            window->messagesBox->append(username + QString(" >> ") + QString(buf));
+
+            window->messagesBox->append(QString(buf));
         }
     }
 }
